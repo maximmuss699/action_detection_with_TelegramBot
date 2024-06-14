@@ -85,6 +85,7 @@ class ActionRecognition:
             cap.release()
             cv2.destroyAllWindows()
 
+
 # Запуск функции для обработки видео с веб-камеры
 if __name__ == "__main__":
     action_recognition = ActionRecognition('yolov8n.pt')
