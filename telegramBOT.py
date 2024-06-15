@@ -1,10 +1,8 @@
 import telebot
-from datetime import datetime
 import threading
 
-
-TELEGRAM_TOKEN = 'YOUR_TELEGRAM' # Your telegram token
-CHAT_ID = 1234567890 # Your chat ID
+TELEGRAM_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
+CHAT_ID = 123456789 # YOUR_CHAT_ID
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
@@ -19,8 +17,6 @@ bot_thread = threading.Thread(target=start_bot)
 bot_thread.daemon = True
 bot_thread.start()
 
-def send_notification(image_path):
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    caption = f"Person detected at {current_time}"
+def send_notification(image_path, caption):
     with open(image_path, 'rb') as photo:
         bot.send_photo(CHAT_ID, photo, caption=caption)
