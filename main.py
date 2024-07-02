@@ -1,7 +1,7 @@
 import cv2
 from ultralytics import YOLO
 import numpy as np
-import torch  # Добавлен импорт PyTorch
+import torch  
 from telegramBOT import send_notification
 import mediapipe as mp
 from datetime import datetime
