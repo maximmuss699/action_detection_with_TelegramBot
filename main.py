@@ -32,7 +32,7 @@ class ActionRecognition:
         return image
 
     def predict(self, img):
-        # Объединяем результаты с разными порогами уверенности
+        # Predict the objects in the image
         results_person = self.model.predict(img, classes=[0], conf=self.confidence_person)
         results_phone = self.model.predict(img, classes=[67], conf=self.confidence_phone)
         return results_person + results_phone
