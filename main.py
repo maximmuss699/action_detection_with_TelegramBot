@@ -1,7 +1,7 @@
 import cv2
 from ultralytics import YOLO
 import numpy as np
-import torch  # Добавлен импорт PyTorch
+import torch
 from telegramBOT import send_notification
 import mediapipe as mp
 from datetime import datetime
@@ -32,7 +32,7 @@ class ActionRecognition:
         return image
 
     def predict(self, img):
-        # Объединяем результаты с разными порогами уверенности
+        # Combine person and phone detection
         results_person = self.model.predict(img, classes=[0], conf=self.confidence_person)
         results_phone = self.model.predict(img, classes=[67], conf=self.confidence_phone)
         return results_person + results_phone
@@ -44,17 +44,17 @@ class ActionRecognition:
         for result in results:
             for box in result.boxes:
                 class_id = int(box.cls[0])
-                if class_id in [0, 67]:  # Проверка, что обнаружен человек (класс 0) или телефон (класс 67)
-                    # Рисование прямоугольника вокруг объекта
+                if class_id in [0, 67]:  # Check if person or phone is detected
+                    # Drwaw bounding box
                     cv2.rectangle(img, (int(box.xyxy[0][0]), int(box.xyxy[0][1])),
                                   (int(box.xyxy[0][2]), int(box.xyxy[0][3])), (0, 255, 0), 2)
-                    # Добавление текста с именем класса и вероятностью
+                    # Add class name and confidence
                     confidence = box.conf.item() if isinstance(box.conf, torch.Tensor) else box.conf
                     cv2.putText(img, f"{result.names[class_id]} {confidence:.2f}",
                                 (int(box.xyxy[0][0]), int(box.xyxy[0][1]) - 10),
-                                cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)  # Изменены параметры шрифта
+                                cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
 
-                    if class_id == 67:  # Проверка, что обнаружен телефон (класс 67)
+                    if class_id == 67:  # Check if phone is detected
                         phone_detected = True
 
         if phone_detected and not self.notified:
@@ -79,14 +79,14 @@ class ActionRecognition:
                     print("Failed to capture image from camera")
                     break
 
-                # Детекция рук
+                # Hand detection
                 img = self.detect_hands(img)
 
-                # Предсказание объектов и отправка уведомлений
+                # Prediction and notification
                 result_img, _ = self.predict_and_notify(img)
                 cv2.imshow("MediaPipe Hands + YOLO Detection", result_img)
 
-                if cv2.waitKey(1) & 0xFF == 27:  # Выход по нажатию ESC
+                if cv2.waitKey(1) & 0xFF == 27:  # Exit on ESC
                     break
         finally:
             cap.release()
